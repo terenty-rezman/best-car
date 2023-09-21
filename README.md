@@ -1,6 +1,6 @@
 # great car
 
-# uart setup
+## uart setup
 on stm32 use usart2 in async mode with default settings
 
 ### uart interrupt receive
