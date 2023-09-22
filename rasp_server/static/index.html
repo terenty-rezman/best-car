@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Remote control</title>
+    <link rel="stylesheet" href="lib/materialize.min.css">
+</head>
+<style>
+    .page_container {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .ui_container {
+        text-align: center;
+    }
+</style>
+
+<body>
+    <div class="page_container">
+        <div class="ui_container container">
+            <h3 class='grey-text'>
+                light
+            </h3>
+            <h1 id='display_speed' class='teal-text'>
+                0
+            </h1>
+            <div class='row'>
+                <input id="control_speed" type="range" min="0" max="255" class='col s6 offset-s3'>
+            </div>
+            <!-- <div id='stop_btn' class='row'>
+                <a class='btn waves-effect waves-light'>stop</a>
+            </div> -->
+        </div>
+    </div>
+</body>
+<script src="lib/socket.io.slim.js"></script>
+<script src="main.js" type="module"></script>
+
+</html>
