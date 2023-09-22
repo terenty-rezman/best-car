@@ -16,7 +16,7 @@ class CustomFlask(Flask):
 
 _app = CustomFlask(__name__,
                    static_url_path='',
-                   static_folder='static')
+                   static_folder='frontend')
 
 _socketio = SocketIO(_app)
 _update_callbacks = dict()
