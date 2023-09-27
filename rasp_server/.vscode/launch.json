@@ -14,7 +14,8 @@
             "args": [
                 "run"
             ],
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "justMyCode": false
         }
     ]
 }

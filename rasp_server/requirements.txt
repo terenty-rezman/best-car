@@ -3,3 +3,4 @@ flask-socketio
 eventlet
 wiringpi
 pyserial
+opencv-python

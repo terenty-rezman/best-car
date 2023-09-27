@@ -6,7 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Remote control</title>
-    <link rel="stylesheet" href="lib/materialize.min.css">
+    <!-- <link rel="stylesheet" href="lib/materialize.min.css"> -->
+
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="lib/joy.js"></script>
 </head>
 <style>
     .page_container {
@@ -18,27 +27,68 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        background-color: #000;
+        z-index: -101;
+    }
+
+    .prevent-select {
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
+    }
+
+    .video_feed {
+        position: absolute;
+        z-index: -100;
+        margin: auto;
+        object-fit: contain;
+        width: 100%;
+        max-height: 100%;
     }
 
     .ui_container {
         text-align: center;
+        align-self: flex-end;
     }
+
+    .color_yellow {
+        color: #ffeb3b;
+    }
+
+    .position_fixed {
+        position: absolute;
+        bottom: 0px;
+        left: 50%;
+    }
+
+    .opacity_animated {
+        opacity: 0;
+        transition: opacity 0.5s;
+    }
+
 </style>
 
-<body>
+<body id="body" class="prevent-select">
     <div class="page_container">
+        <img id="camera" class="video_feed" src="http://192.168.32.191:5050/video_feed">
         <div class="ui_container container">
-            <h3 class='grey-text'>
+            <!-- <h3 class='color_yellow'>
                 light
-            </h3>
-            <h1 id='display_speed' class='teal-text'>
+            </h3> -->
+            <h1 id='display1' class='color_yellow'>
                 0
             </h1>
-            <div class='row'>
+            <h1 id='display2' class='color_yellow'>
+                0
+            </h1>
+            <!-- <div class='row'>
                 <input id="control_speed" type="range" min="0" max="255" class='col s6 offset-s3'>
-            </div>
+            </div> -->
+            <div id="joy1Div" style="width:200px;height:200px;margin:0px;position:fixed;top:30px;left:500px;" class="opacity_animated"></div>
+            <div id="joy2Div" style="width:200px;height:200px;margin:0px;position:fixed;top:30px;left:100px;" class="opacity_animated"></div>
             <div id='fullscreen_btn' class='row'>
-                <a class='btn waves-effect waves-light'>fullscreen</a>
+                <!-- <a class='btn waves-effect waves-light'>fullscreen</a> -->
+                <i class="large material-icons color_yellow clickable">screen_rotation</i>
             </div>
         </div>
     </div>

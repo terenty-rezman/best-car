@@ -1,8 +1,10 @@
 import medium
-import wiringpi
+from medium import _app
 import serial
+from flask import Response
 
 BAUD = 115200
+
 
 # connect to stm32 via UART
 ser = serial.Serial('/dev/ttyAMA0', BAUD)  # open serial port
@@ -19,4 +21,5 @@ def speedUpdated(value):
     ser.write(as_bytes)
 
 
-medium.listen('0.0.0.0', 5000)
+if __name__ == "__main__":
+    medium.listen('0.0.0.0', 5000)
