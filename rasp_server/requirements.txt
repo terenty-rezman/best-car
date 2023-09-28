@@ -4,3 +4,4 @@ eventlet
 wiringpi
 pyserial
 opencv-python
+apscheduler

@@ -30,14 +30,50 @@ function toggleFullScreen() {
   }
 }
 
-let joy1 = new JoyStick('joy1Div', {half: "left"}, function(stickData) {
+function start_timer() {
+  const start = Date.now();
+  return function () {
+    return Date.now() - start;
+  }
+}
+
+const stick_data = {
+    joy_left_x: 0,
+    joy_left_y: 0,
+    joy_right_x: 0,
+    joy_right_y: 0
+};
+
+let elapsed_last_send = start_timer(); 
+
+function send_joystick_data() {
+    medium.set('joy', stick_data);
+    elapsed_last_send = start_timer();
+}
+
+let joy_left = new JoyStick('joy_left', {half: "left"}, function(stickData) {
     // console.log(stickData.x);
     // console.log(stickData.y);
+    stick_data.joy_left_x = stickData.x;
+    stick_data.joy_left_y = stickData.y;
+
+    send_joystick_data();
 });
 
-let joy2 = new JoyStick('joy2Div', {half: "right"}, function(stickData) {
+let joy_right = new JoyStick('joy_right', {half: "right"}, function(stickData) {
     // console.log(stickData.x);
     // console.log(stickData.y);
-    display1.textContent = stickData.x;
-    display2.textContent = stickData.y;
+    // display1.textContent = stickData.x;
+    // display2.textContent = stickData.y;
+    stick_data.joy_right_x = stickData.x;
+    stick_data.joy_right_y = stickData.y;
+
+    send_joystick_data();
 });
+
+// keepalive send
+setInterval(() => {
+    if (elapsed_last_send() > 100) { // ms
+        send_joystick_data();
+    }
+}, 10)

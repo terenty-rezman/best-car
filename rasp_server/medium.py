@@ -21,6 +21,7 @@ _app = CustomFlask(__name__,
 _socketio = SocketIO(_app)
 _update_callbacks = dict()
 _values = dict()
+_disconnect_callback = None
 
 
 @_app.route('/')
@@ -36,6 +37,8 @@ def _on_client_connected():
 @_socketio.on('disconnect')
 def _on_client_disconnected():
     print(f'client {request.sid} disconnected')
+    if _disconnect_callback:
+        _disconnect_callback(request.sid)
 
 
 @_socketio.on('provide')
@@ -56,7 +59,7 @@ def _on_changed(json):
 
     callback = _update_callbacks.get(name, None)
     if callback:
-        callback(value)
+        callback(value, request.sid)
 
 
 def subscribe(var_name):
@@ -73,6 +76,13 @@ def set(name, value):
 
 def get(name):
     return _values.get(name, None)
+
+
+def on_disconnect():
+    def decorator(callback):
+        _disconnect_callback = callback
+        return callback
+    return decorator
 
 
 def listen(host, port):
