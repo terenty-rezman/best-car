@@ -9,7 +9,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 BAUD = 115200
 
-
 # connect to stm32 via UART
 ser = serial.Serial('/dev/ttyAMA0', BAUD)  # open serial port
 print(ser.name)
@@ -44,10 +43,37 @@ def joyUpdated(joy, client_sid):
     
     last_controll_time = time.time()
 
-    value = min(255, abs(int(joy["joy_right_y"])))
 
-    as_bytes = bytes([value])
-    ser.write(as_bytes)
+    joy_left_x = abs(int(joy["joy_left_x"]))
+    joy_left_y = abs(int(joy["joy_left_y"]))
+    joy_right_x = abs(int(joy["joy_right_x"]))
+    joy_right_y = abs(int(joy["joy_right_y"]))
+
+    joy_left_x = int(joy_left_x / 100 * 255)
+    joy_left_y = int(joy_left_y / 100 * 255)
+    joy_right_x = int(joy_right_x / 100 * 255)
+    joy_right_y = int(joy_right_y / 100 * 255)
+
+    joy_left_x = min(255, joy_left_x)
+    joy_left_y = min(255, joy_left_y)
+    joy_right_x = min(255, joy_right_x)
+    joy_right_y = min(255, joy_right_y)
+
+    joy_left_x_negative = 1 if int(joy["joy_left_x"]) < 0 else 0
+    joy_left_y_negative = 1 if int(joy["joy_left_y"]) < 0 else 0
+    joy_right_x_negative = 1 if int(joy["joy_right_x"]) < 0 else 0
+    joy_right_y_negative = 1 if int(joy["joy_right_y"]) < 0 else 0
+
+    arr = [
+        joy_left_x, joy_left_y, joy_right_x, joy_right_y, joy_left_x_negative, joy_left_y_negative, joy_right_x_negative, joy_right_y_negative
+    ]
+
+    # arr = [
+    #     201, 202, 203, 204, 1, 2, 3, 4
+    # ]
+
+    as_bytes = bytes(arr)
+    written = ser.write(as_bytes)
 
 
 def reset_controlling_client():

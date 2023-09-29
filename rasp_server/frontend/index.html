@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="theme-color" content="#000">
     <title>Remote control</title>
 
     <link rel="stylesheet" href="lib/materialize.min.css">
@@ -62,6 +63,10 @@
         transition: opacity 0.5s;
     }
 
+    .inline {
+        display: inline;
+    }
+
 </style>
 
 <body id="body" class="prevent-select">
@@ -76,8 +81,11 @@
             </h1> -->
             <div id="joy_left" style="width:200px;height:200px;margin:0px;position:fixed;top:30px;left:100px;" class="opacity_animated"></div>
             <div id="joy_right" style="width:200px;height:200px;margin:0px;position:fixed;top:30px;left:500px;" class="opacity_animated"></div>
-            <div id='fullscreen_btn' class='row'>
-                <i class="large material-icons color_yellow clickable">screen_rotation</i>
+            <div id='fullscreen_btn' class="inline">
+                <i class="medium material-icons color_yellow clickable">screen_rotation</i>
+            </div>
+            <div id='reload_btn' class="inline">
+                <i class="medium material-icons color_yellow clickable">refresh</i>
             </div>
         </div>
     </div>

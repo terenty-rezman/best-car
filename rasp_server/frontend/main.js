@@ -7,6 +7,7 @@ const slider = document.getElementById('control_speed');
 const display1 = document.getElementById('display1');
 const display2 = document.getElementById('display2');
 const fullscreen_btn = document.getElementById('fullscreen_btn');
+const reload_btn = document.getElementById('reload_btn');
 
 const camera = document.getElementById('camera');
 camera.src = window.location.protocol + "//" + window.location.hostname + ":5050/video_feed"
@@ -14,6 +15,7 @@ camera.src = window.location.protocol + "//" + window.location.hostname + ":5050
 // slider.addEventListener('input', e => medium.set('speed', Number(slider.value)))
 
 fullscreen_btn.addEventListener('click', e => toggleFullScreen())
+reload_btn.addEventListener('click', e => location.reload())
 
 medium.subscribe('speed', (value) => {
     // slider.value = value;
