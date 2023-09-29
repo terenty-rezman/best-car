@@ -19,3 +19,32 @@ https://dzen.ru/media/unpromresdept/vkliuchenie-interfeisov-uart-na-gpio-razeme-
 
 then use `minicom -D /dev/ttyAMA0` to connect to stm32 via uart
 
+### listen on port 80
+https://stackoverflow.com/questions/413807/is-there-a-way-for-non-root-processes-to-bind-to-privileged-ports-on-linux
+
+### raspberry as wifi server
+
+/etc/hostapd/hostapd.conf
+```
+country_code=RU
+
+interface=wlan1
+driver=nl80211
+hw_mode=g
+channel=9
+wmm_enabled=1
+macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+wpa=2
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=TKIP
+rsn_pairwise=CCMP
+ssid=best
+wpa_passphrase=carcarcar
+
+logger_syslog=-1
+logger_syslog_level=0
+logger_stdout=-1
+logger_stdout_level=0
+```
