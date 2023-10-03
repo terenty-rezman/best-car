@@ -8,9 +8,10 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 
 BAUD = 115200
+medium.USE_WEBRTC = True
 
 # connect to stm32 via UART
-ser = serial.Serial('/dev/ttyAMA0', BAUD)  # open serial port
+ser = serial.Serial('/dev/ttyAMA0', BAUD, write_timeout=0)  # open serial port
 print(ser.name)
 
 medium.set('joy', {})
@@ -18,6 +19,14 @@ medium.set('joy', {})
 
 controlling_client = None
 last_controll_time = time.time()
+
+
+def write_uart(arr: list):
+    if ser.isOpen() == False:
+        return
+
+    as_bytes = bytes(arr)
+    written = ser.write(as_bytes)
 
 
 @medium.on_disconnect()
@@ -29,8 +38,6 @@ def client_disconnected(cliend_sid):
 
 @medium.subscribe('joy')
 def joyUpdated(joy, client_sid):
-    # print(joy)
-
     global controlling_client
     global last_controll_time
 
@@ -42,7 +49,6 @@ def joyUpdated(joy, client_sid):
         return
     
     last_controll_time = time.time()
-
 
     joy_left_x = abs(int(joy["joy_left_x"]))
     joy_left_y = abs(int(joy["joy_left_y"]))
@@ -72,8 +78,7 @@ def joyUpdated(joy, client_sid):
     #     201, 202, 203, 204, 1, 2, 3, 4
     # ]
 
-    as_bytes = bytes(arr)
-    written = ser.write(as_bytes)
+    write_uart(arr)
 
 
 def reset_controlling_client():
@@ -85,6 +90,7 @@ def reset_controlling_client():
     if time.time() - last_controll_time > 1:
         controlling_client = None
         print("control client disconnect")
+        write_uart([0, 0, 0, 0, 0, 0, 0, 0])
 
 
 scheduler = BackgroundScheduler()

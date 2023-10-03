@@ -49,7 +49,12 @@
     }
 
     .color_yellow {
-        color: #ffeb3b;
+        color: #000;
+        background: #fff;
+        opacity: 0.7;
+        padding: 3px;
+        margin: 5px;
+        border-radius: 10px;
     }
 
     .position_fixed {
@@ -71,7 +76,11 @@
 
 <body id="body" class="prevent-select">
     <div class="page_container">
-        <img id="camera" class="video_feed" src="http://192.168.32.191:5050/video_feed">
+        {% if use_webrtc %}
+            <video id="camera" playsinline autoplay class="video_feed" muted="muted"></video>
+        {% else %}
+            <img id="camera" class="video_feed" src="http://192.168.32.191:5050/video_feed"></img>
+        {% endif %}
         <div class="ui_container container">
             <!-- <h1 id='display1' class='color_yellow'>
                 0
@@ -91,6 +100,8 @@
     </div>
 </body>
 <script src="lib/socket.io.slim.js"></script>
+{% if use_webrtc %}
+    <script src="signaling.js"></script>
+{% endif %}
 <script src="main.js" type="module"></script>
-
 </html>

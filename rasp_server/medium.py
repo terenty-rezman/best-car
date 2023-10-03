@@ -1,6 +1,11 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_socketio import SocketIO, emit
 import mimetypes
+
+
+FRONTEND_FOLDER = "frontend"
+USE_WEBRTC = False
+
 
 # fix for windows (otherwise module .js served as text/plain)
 mimetypes.add_type('application/javascript', '.js')
@@ -13,10 +18,12 @@ class CustomFlask(Flask):
             return 0
         return Flask.get_send_file_max_age(self, name)
 
-
-_app = CustomFlask(__name__,
-                   static_url_path='',
-                   static_folder='frontend')
+_app = CustomFlask(
+    __name__,
+    static_url_path='',
+    static_folder=FRONTEND_FOLDER,
+    template_folder=FRONTEND_FOLDER
+)
 
 _socketio = SocketIO(_app)
 _update_callbacks = dict()
@@ -26,7 +33,8 @@ _disconnect_callback = None
 
 @_app.route('/')
 def home():
-    return _app.send_static_file('index.html')
+    # return _app.send_static_file('index.html')
+    return render_template('index.html', use_webrtc=USE_WEBRTC)
 
 
 @_socketio.on('connect')

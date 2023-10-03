@@ -20,9 +20,12 @@ https://dzen.ru/media/unpromresdept/vkliuchenie-interfeisov-uart-na-gpio-razeme-
 then use `minicom -D /dev/ttyAMA0` to connect to stm32 via uart
 
 ### listen on port 80
-https://stackoverflow.com/questions/413807/is-there-a-way-for-non-root-processes-to-bind-to-privileged-ports-on-linux
+https://stackoverflow.com/a/27989419
+```sysctl -w net.ipv4.ip_unprivileged_port_start=80```
 
 ### raspberry as wifi server
+
+https://pimylifeup.com/raspberry-pi-wireless-access-point/
 
 /etc/hostapd/hostapd.conf
 ```
@@ -48,3 +51,12 @@ logger_syslog_level=0
 logger_stdout=-1
 logger_stdout_level=0
 ```
+
+### python pip
+```sudo apt install python3-pip```
+
+### webrtc
+
+https://raspberrypi.stackexchange.com/questions/39690/configuring-uv4l-for-webrtc-using-usb-camera-on-rpi2-raspbian
+
+https://www.linux-projects.org/uv4l/installation/

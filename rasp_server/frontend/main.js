@@ -10,7 +10,10 @@ const fullscreen_btn = document.getElementById('fullscreen_btn');
 const reload_btn = document.getElementById('reload_btn');
 
 const camera = document.getElementById('camera');
-camera.src = window.location.protocol + "//" + window.location.hostname + ":5050/video_feed"
+
+if (!window.use_webrtc) {
+    camera.src = window.location.protocol + "//" + window.location.hostname + ":5050/video_feed"
+}
 
 // slider.addEventListener('input', e => medium.set('speed', Number(slider.value)))
 
@@ -79,3 +82,50 @@ setInterval(() => {
         send_joystick_data();
     }
 }, 10)
+
+if (window.use_webrtc) {
+    let signalObj = null;
+
+    function connect_webrtc() {
+        if (signalObj)
+            return;
+ 
+        let hostname = location.hostname;
+        let address = hostname + ':' + (location.port || (location.protocol === 'https:' ? 443 : 8090)) + '/stream/webrtc';
+        let protocol = location.protocol === "https:" ? "wss:" : "ws:";
+        let wsurl = protocol + '//' + address;
+
+        let video = document.getElementById('camera');
+
+        M.toast({html: "connecting to camera..."});
+
+        signalObj = new signal(wsurl,
+            function (stream) {
+                M.toast({html: "connected!", classes: "light-green"});
+                video.srcObject = stream;
+                video.play();
+            },
+            function (error) {
+                M.toast({html: error, classes: "red accent-3"});
+                signalObj = null;
+            },
+            function () {
+                M.toast({html: 'websocket closed. bye bye!'});
+                video.srcObject = null;
+                signalObj = null;
+            },
+            function (message) {
+                M.toast({html: message, classes: "amber lighten-2"});
+            }
+        );
+    }
+
+    connect_webrtc();
+
+    function hangup() {
+        if (signalObj) {signalObj.hangup();}
+    }
+
+    addEventListener("beforeunload", () => { hangup() }, { capture: true });
+    reload_btn.addEventListener('click', e => hangup() );
+}

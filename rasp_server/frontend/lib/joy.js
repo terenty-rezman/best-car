@@ -72,7 +72,7 @@ let StickStatus =
  */
 var JoyStick = (function(container, parameters, callback)
 {
-    let default_color = "#ffeb3b8b"
+    let default_color = "#ffffff8b"
     parameters = parameters || {};
     var title = (typeof parameters.title === "undefined" ? "joystick" : parameters.title),
         width = (typeof parameters.width === "undefined" ? 0 : parameters.width),
