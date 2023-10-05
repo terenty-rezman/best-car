@@ -101,20 +101,23 @@ if (window.use_webrtc) {
 
         signalObj = new signal(wsurl,
             function (stream) {
+                // M.Toast.dismissAll();
                 M.toast({html: "connected!", classes: "light-green"});
                 video.srcObject = stream;
                 video.play();
             },
             function (error) {
+                // M.Toast.dismissAll();
                 M.toast({html: error, classes: "red accent-3"});
                 signalObj = null;
             },
             function () {
-                M.toast({html: 'websocket closed. bye bye!'});
+                console.log('websocket closed. bye bye!');
                 video.srcObject = null;
                 signalObj = null;
             },
             function (message) {
+                // M.Toast.dismissAll();
                 M.toast({html: message, classes: "amber lighten-2"});
             }
         );

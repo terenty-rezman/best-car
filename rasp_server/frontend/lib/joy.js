@@ -45,6 +45,16 @@
  * SOFTWARE.
  */
 
+function get_screen_orientation() {
+    if (window.matchMedia("(orientation: portrait)").matches) {
+        return "portrait";
+    }
+
+    if (window.matchMedia("(orientation: landscape)").matches) {
+        return "landscape";
+    }
+}
+
 let StickStatus =
 {
     xPosition: 0,
@@ -78,10 +88,11 @@ var JoyStick = (function(container, parameters, callback)
         width = (typeof parameters.width === "undefined" ? 0 : parameters.width),
         height = (typeof parameters.height === "undefined" ? 0 : parameters.height),
         internalFillColor = (typeof parameters.internalFillColor === "undefined" ? default_color : parameters.internalFillColor),
-        internalLineWidth = (typeof parameters.internalLineWidth === "undefined" ? 2 : parameters.internalLineWidth),
-        internalStrokeColor = (typeof parameters.internalStrokeColor === "undefined" ? default_color : parameters.internalStrokeColor),
-        externalLineWidth = (typeof parameters.externalLineWidth === "undefined" ? 2 : parameters.externalLineWidth),
-        externalStrokeColor = (typeof parameters.externalStrokeColor ===  "undefined" ? default_color : parameters.externalStrokeColor),
+        internalLineWidth = (typeof parameters.internalLineWidth === "undefined" ? 0 : parameters.internalLineWidth),
+        internalStrokeColor = (typeof parameters.internalStrokeColor === "undefined" ? "#ffffff00" : parameters.internalStrokeColor),
+        externalLineWidth = (typeof parameters.externalLineWidth === "undefined" ? 0 : parameters.externalLineWidth),
+        externalStrokeColor = (typeof parameters.externalStrokeColor ===  "undefined" ? "#ffffff00" : parameters.externalStrokeColor),
+        externalFillColor = (typeof parameters.externalStrokeColor ===  "undefined" ? "#ffffff55" : parameters.externalStrokeColor),
         autoReturnToCenter = (typeof parameters.autoReturnToCenter === "undefined" ? true : parameters.autoReturnToCenter);
     
     let half = (typeof parameters.half === "undefined" ? "left" : parameters.half)
@@ -118,6 +129,8 @@ var JoyStick = (function(container, parameters, callback)
     var movedX=centerX;
     var movedY=centerY;
 
+    let orientation = get_screen_orientation(); 
+
     // Check if the device support the touch or not
     if("ontouchstart" in document.documentElement)
     {
@@ -127,13 +140,26 @@ var JoyStick = (function(container, parameters, callback)
     }
     else
     {
-        canvas.addEventListener("mousedown", onMouseDown, false);
-        document.addEventListener("mousemove", onMouseMove, false);
-        document.addEventListener("mouseup", onMouseUp, false);
+        // mouse not used so far!
+        // canvas.addEventListener("mousedown", onMouseDown, false);
+        // document.addEventListener("mousemove", onMouseMove, false);
+        // document.addEventListener("mouseup", onMouseUp, false);
     }
     // Draw the object
     drawExternal();
     drawInternal();
+
+    // Listen for orientation changes
+    screen.orientation.addEventListener("change", (event) => {
+        const type = event.target.type;
+
+        if(type.includes("landscape")) {
+            orientation = "landscape";
+        }
+        else{
+            orientation = "portrait";
+        }
+    });
 
     /******************************************************
      * Private methods
@@ -146,6 +172,8 @@ var JoyStick = (function(container, parameters, callback)
     {
         context.beginPath();
         context.arc(centerX, centerY, externalRadius, 0, circumference, false);
+        context.fillStyle = externalFillColor;
+        context.fill();
         context.lineWidth = externalLineWidth;
         context.strokeStyle = externalStrokeColor;
         context.stroke();
@@ -163,12 +191,13 @@ var JoyStick = (function(container, parameters, callback)
         if((movedY+internalRadius) > canvas.height) { movedY = canvas.height-(maxMoveStick); }
         context.arc(movedX, movedY, internalRadius, 0, circumference, false);
         // create radial gradient
-        var grd = context.createRadialGradient(centerX, centerY, 5, centerX, centerY, 200);
+        // var grd = context.createRadialGradient(centerX, centerY, 5, centerX, centerY, 200);
         // Light color
-        grd.addColorStop(0, internalFillColor);
+        // grd.addColorStop(0, internalFillColor);
         // Dark color
-        grd.addColorStop(1, internalStrokeColor);
-        context.fillStyle = grd;
+        // grd.addColorStop(1, internalStrokeColor);
+        // context.fillStyle = grd;
+        context.fillStyle = internalFillColor;
         context.fill();
         context.lineWidth = internalLineWidth;
         context.strokeStyle = internalStrokeColor;
@@ -201,6 +230,10 @@ var JoyStick = (function(container, parameters, callback)
      */
     function onTouchStart(event) 
     {
+        if (orientation !== "landscape") {
+            return;
+        }
+
         for (let touch of event.touches) {
             let press_in_my_half = my_half(touch);
 
