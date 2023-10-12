@@ -27,6 +27,8 @@ https://stackoverflow.com/a/27989419
 
 https://pimylifeup.com/raspberry-pi-wireless-access-point/
 
+__wlan1 is used as wifi server!__
+
 /etc/hostapd/hostapd.conf
 ```
 country_code=RU
@@ -50,6 +52,22 @@ logger_syslog=-1
 logger_syslog_level=0
 logger_stdout=-1
 logger_stdout_level=0
+```
+
+### raspberry as wifi client
+
+__wlan0 is used as wifi server!__
+
+`sudo vim /etc/wpa_supplicant/wpa_supplicant-wlan0.conf`
+```
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=RU
+
+network={
+        ssid="Topsecret"
+        psk="pass"
+}
 ```
 
 ### python pip
