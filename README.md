@@ -20,8 +20,10 @@ https://dzen.ru/media/unpromresdept/vkliuchenie-interfeisov-uart-na-gpio-razeme-
 then use `minicom -D /dev/ttyAMA0` to connect to stm32 via uart
 
 ### listen on port 80
-https://stackoverflow.com/a/27989419
-```sysctl -w net.ipv4.ip_unprivileged_port_start=80```
+https://stackoverflow.com/a/27989419 <br>
+`sudo vim /etc/sysctl.conf`
+
+```net.ipv4.ip_unprivileged_port_start=80```
 
 ### raspberry as wifi server
 
@@ -56,7 +58,7 @@ logger_stdout_level=0
 
 ### raspberry as wifi client
 
-__wlan0 is used as wifi server!__
+__wlan0 is used as wifi client!__
 
 `sudo vim /etc/wpa_supplicant/wpa_supplicant-wlan0.conf`
 ```
@@ -68,6 +70,12 @@ network={
         ssid="Topsecret"
         psk="pass"
 }
+```
+
+### beeline force share internet
+`sudo vim /etc/sysctl.conf`
+```
+net.ipv4.ip_default_ttl=65
 ```
 
 ### python pip
