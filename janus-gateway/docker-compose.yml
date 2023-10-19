@@ -4,16 +4,18 @@ services:
   janus-gateway:
     image: 'canyan/janus-gateway:latest'
     command: ["/usr/local/bin/janus", "-F", "/usr/local/etc/janus"]
-    ports:
-      - "8188:8188"
-      - "8088:8088"
-      - "8069:8089"
-      - "8869:8889"
-      - "8001:8001"
-      - "7088:7088"
-      - "7089:7089"
-      - "10000-10200:10000-10200/udp"
+    network_mode: host
+    #ports:
+    #- "8188:8188"
+    #- "8088:8088"
+    #- "8069:8089"
+    #- "8869:8889"
+    #- "8001:8001"
+    #- "7088:7088"
+    #- "7089:7089"
+    #- "5000-6000:5000-6000/udp"
     volumes:
       - ./janus.jcfg:/usr/local/etc/janus/janus.jcfg
-      - ./janus.eventhandler.sampleevh.jcfg:/usr/local/etc/janus/janus.eventhandler.sampleevh.jcfg
+      - ./janus.plugin.videoroom.jcfg:/usr/local/etc/janus/janus.plugin.videoroom.jcfg
+    #- ./janus.eventhandler.sampleevh.jcfg:/usr/local/etc/janus/janus.eventhandler.sampleevh.jcfg
     restart: always
