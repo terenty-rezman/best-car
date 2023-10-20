@@ -28,7 +28,10 @@
     </script>
     <script src="./dist/index.js"></script>
     <script>
-        const clientReady = exports.createVideoRoomClient({debug: true})
+	    const clientReady = exports.createVideoRoomClient({debug: true, iceServers: [
+		    {urls: "turn:turn.2089517-cn34567.twc1.net:5349", username: "user1", credential: "thecar"},
+		    {urls: "stun:stun.2089517-cn34567.twc1.net:3478", username: "user1", credential: "thecar"}
+	    ]})
 
         async function connect(server, roomId, displayName, publish) {
             const client = await clientReady
@@ -102,7 +105,7 @@
 </head>
 <body>
     <form id="main-form">
-        <input type="text" name="server" value="http://tech.divid.team:8088/janus" placeholder="Server" required/>
+        <input type="text" name="server" value="wss://2089517-cn34567.twc1.net/janus-ws" placeholder="Server" required/>
         <input type="number" name="roomId" value="1234" placeholder="Room" required/>
         <input type="text" name="displayName" value="me" placeholder="Enter your name" required/>
         <input type="checkbox" name="publish"/> publish self
