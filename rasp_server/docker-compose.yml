@@ -4,8 +4,8 @@ services:
   control:
     build: .
     command: python3 control_server.py
-    # volumes:
-    #  - .:/code
+    volumes:
+      - .:/code
     devices:
       - /dev/ttyAMA0:/dev/ttyAMA0 
     ports:

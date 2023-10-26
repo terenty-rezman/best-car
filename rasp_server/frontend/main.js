@@ -91,7 +91,7 @@ if (window.use_webrtc) {
             return;
  
         let hostname = location.hostname;
-        let address = hostname + ':' + (location.port || (location.protocol === 'https:' ? 443 : 8090)) + '/stream/webrtc';
+        let address = hostname + ':' + (location.port || (location.protocol === 'https:' ? 443 : 8080)) + '/stream/webrtc';
         let protocol = location.protocol === "https:" ? "wss:" : "ws:";
         let wsurl = protocol + '//' + address;
 
