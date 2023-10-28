@@ -1,8 +1,8 @@
 // Config variables: change them to point to your own servers
-const SIGNALING_SERVER_URL = `http://${window.location.hostname}:9999`;
-const TURN_SERVER_URL = 'localhost:3478';
-const TURN_SERVER_USERNAME = 'username';
-const TURN_SERVER_CREDENTIAL = 'credential';
+const SIGNALING_SERVER_URL = `https://${window.location.hostname}`;
+const TURN_SERVER_URL = `${window.location.hostname}:3478`;
+const TURN_SERVER_USERNAME = 'user1';
+const TURN_SERVER_CREDENTIAL = 'thecar';
 // WebRTC config: you don't have to change this for the example to work
 // If you are testing on localhost, you can just use PC_CONFIG = {}
 const PC_CONFIG = {
@@ -21,7 +21,7 @@ const PC_CONFIG = {
 };
 
 // Signaling methods
-let socket = io(SIGNALING_SERVER_URL, { autoConnect: false });
+let socket = io(SIGNALING_SERVER_URL, { path: '/signaling-ws/socket.io', autoConnect: false});
 
 socket.on('data', (data) => {
   console.log('Data received: ',data);
