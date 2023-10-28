@@ -46,19 +46,20 @@ let remoteStreamElement = document.querySelector('#remoteStream');
 let localStreamElement = document.querySelector('#localStream');
 
 let getLocalStream = () => {
-  navigator.mediaDevices.getUserMedia({ audio: false, video: true })
-    .then((stream) => {
-      console.log('Stream found');
-      localStream = stream;
+  //navigator.mediaDevices.getUserMedia({ audio: false, video: true })
+   // .then((stream) => {
+    //  console.log('Stream found');
+     // localStream = stream;
       // Disable the microphone by default
     //   stream.getAudioTracks()[0].enabled = false;
-      localStreamElement.srcObject = localStream;
+      //localStreamElement.srcObject = localStream;
       // Connect after making sure that local stream is availble
-      socket.connect();
-    })
-    .catch(error => {
-      console.error('Stream not found: ', error);
-    });
+      //socket.connect();
+    //})
+    //.catch(error => {
+    //  console.error('Stream not found: ', error);
+    //});
+    socket.connect(() => socket.emit("subscriber"));
 }
 
 let createPeerConnection = () => {
@@ -66,7 +67,7 @@ let createPeerConnection = () => {
     pc = new RTCPeerConnection(PC_CONFIG);
     pc.onicecandidate = onIceCandidate;
     pc.ontrack = onTrack;
-    pc.addStream(localStream);
+    //pc.addStream(localStream);
     console.log('PeerConnection created');
   } catch (error) {
     console.error('PeerConnection failed: ', error);
@@ -75,7 +76,7 @@ let createPeerConnection = () => {
 
 let sendOffer = () => {
   console.log('Send offer');
-  pc.createOffer().then(
+  pc.createOffer({ offerToReceiveVideo: true, offerToReceiveAudio: true }).then(
     setAndSendLocalDescription,
     (error) => { console.error('Send offer failed: ', error); }
   );
