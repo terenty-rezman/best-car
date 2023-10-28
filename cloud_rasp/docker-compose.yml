@@ -6,8 +6,8 @@ services:
     container_name: webrtc-streamer
     network_mode: host
     command: [
-      "-u", "videocap://0", "-tuser1:thecar@2089517-cn34567.twc1.net:3478",
-      "-vvvvv"
+      "-u", "videocap://0", "-tuser1:thecar@2089517-cn34567.twc1.net:5349",
+      "-vv"
     ]
     #command: ["-u", "videocap://0"]
     devices:

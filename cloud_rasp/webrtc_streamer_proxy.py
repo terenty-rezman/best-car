@@ -46,6 +46,7 @@ async def data(data):
 
 
 async def webrtcstreamer_add_ice_candidate(c):
+    print('send candidate:', c)
     add_candidate_url = WEBRTC_STREAMER_URL + "/api/addIceCandidate?peerid=" + peer_id
     async with aiohttp.ClientSession() as s:
         res = await s.post(add_candidate_url, data=json.dumps(c))
