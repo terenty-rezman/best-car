@@ -1,6 +1,5 @@
 from aiohttp import web
 import socketio
-from socketio import ConnectionRefusedError
 
 ROOM = 'room'
 
