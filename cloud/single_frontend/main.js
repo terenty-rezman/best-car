@@ -1,6 +1,6 @@
 // Config variables: change them to point to your own servers
 const SIGNALING_SERVER_URL = `https://${window.location.hostname}`;
-const TURN_SERVER_URL = `${window.location.hostname}:3478`;
+const TURN_SERVER_URL = `${window.location.hostname}:5349`;
 const TURN_SERVER_USERNAME = 'user1';
 const TURN_SERVER_CREDENTIAL = 'thecar';
 // WebRTC config: you don't have to change this for the example to work
