@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  webrtc-streamer:
+    image: mpromonet/webrtc-streamer
+    container_name: webrtc-streamer
+    network_mode: host
+    command: [
+      "-u", "videocap://0", "-tuser1:thecar@2089517-cn34567.twc1.net:3478",
+      "-vvvvv"
+    ]
+    #command: ["-u", "videocap://0"]
+    devices:
+      - "/dev/video0:/dev/video0"
+    expose:
+      - "8000"
+
+  webrtc-streamer-proxy:
+    build: .
+    container_name: webrtc-streamer-proxy
+    network_mode: host
+    depends_on: 
+      - webrtc-streamer
+    volumes:
+      - .:/signaling

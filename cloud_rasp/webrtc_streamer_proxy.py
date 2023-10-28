@@ -11,14 +11,17 @@ SIGNALING_SERVER_URL = 'https://2089517-cn34567.twc1.net'
 WEBRTC_STREAMER_URL = 'http://localhost:8000'
 
 peer_id = None
+early_candidates = []
+peers_ready = False
 
 # asyncio
 sio = socketio.AsyncClient()
 
 
 @sio.event
-def connect():
+async def connect():
     print("I'm connected!")
+    await sio.emit('publisher')
 
 
 @sio.event
@@ -34,7 +37,7 @@ def disconnect():
 @sio.event
 async def ready():
     print('ready')
-    await call_webrtc_streamer()
+    await init_webrtcstreamer()
 
 
 @sio.event
@@ -42,9 +45,19 @@ async def data(data):
     await handle_signaling_data(data)
 
 
+async def webrtcstreamer_add_ice_candidate(c):
+    add_candidate_url = WEBRTC_STREAMER_URL + "/api/addIceCandidate?peerid=" + peer_id
+    async with aiohttp.ClientSession() as s:
+        res = await s.post(add_candidate_url, data=json.dumps(c))
+
+
 async def handle_signaling_data(data):
     type = data["type"]
-    print(type)
+    print("received event:", type)
+
+    global peers_ready
+    global early_candidates
+
     if type == "offer":
         global peer_id
         peer_id = str(random.random())
@@ -58,6 +71,12 @@ async def handle_signaling_data(data):
             res = await s.post(call_url, data=json.dumps(data))
             res_json = await res.json(content_type=None)
             await sio.emit('data', res_json)
+
+        peers_ready = True
+
+        for c in early_candidates:
+            webrtcstreamer_add_ice_candidate(c)
+        early_candidates = []
         
         async with aiohttp.ClientSession() as s:
             get_ice_candidates_url = WEBRTC_STREAMER_URL + "/api/getIceCandidate" + "?peerid=" + peer_id
@@ -66,25 +85,33 @@ async def handle_signaling_data(data):
             candidates = await res.json(content_type=None)
 
             for c in candidates:
+                print("local candidate:", c)
                 await sio.emit('data', {"type": 'candidate', "candidate": c})
     elif type == "answer":
         pass
     elif type == "candidate":
-        add_candidate_url = WEBRTC_STREAMER_URL + "/api/addIceCandidate?peerid=" + peer_id
-        async with aiohttp.ClientSession() as s:
-            res = await s.post(add_candidate_url, data=json.dumps(data["candidate"]))
+        if peers_ready:
+            webrtcstreamer_add_ice_candidate(data["candidate"])
+        else:
+            early_candidates.append(data["candidate"])
 
 
-async def call_webrtc_streamer():
+async def init_webrtcstreamer():
     async with aiohttp.ClientSession() as s:
         res = await s.get(WEBRTC_STREAMER_URL + "/api/getIceServers")
         ice_servers = await res.json(content_type=None);
-        
+
         print(ice_servers)
+
+        global early_candidates
+        global peers_ready
+        early_candidates = []
+        peers_ready = False
 
 
 async def main():
     await sio.connect(SIGNALING_SERVER_URL, socketio_path='signaling-ws/socket.io')
+    print("connected to signaling server")
     await sio.wait()
 
 
