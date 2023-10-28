@@ -29,6 +29,8 @@ services:
                         #bash -c "while true; do nc -lp 9999; done"
                 expose:
                         - 9999
+                volumes:
+                        - ./signaling:/signaling
                 network_mode: host
                           #networks:
                           #- internal_net

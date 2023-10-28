@@ -23,6 +23,10 @@ const PC_CONFIG = {
 // Signaling methods
 let socket = io(SIGNALING_SERVER_URL, { path: '/signaling-ws/socket.io', autoConnect: false});
 
+socket.on('connect', () => {
+  socket.emit('subscriber');
+});
+
 socket.on('data', (data) => {
   console.log('Data received: ',data);
   handleSignalingData(data);
@@ -59,7 +63,7 @@ let getLocalStream = () => {
     //.catch(error => {
     //  console.error('Stream not found: ', error);
     //});
-    socket.connect(() => socket.emit("subscriber"));
+    socket.connect();
 }
 
 let createPeerConnection = () => {

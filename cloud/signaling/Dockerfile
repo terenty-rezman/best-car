@@ -3,7 +3,8 @@ FROM python:3.8
 RUN apt update && apt install netcat-openbsd -y
 EXPOSE 9999
 RUN mkdir /signaling
-COPY ./ /signaling
 WORKDIR /signaling/
+COPY ./requirements.txt .
 RUN python -m pip install -r requirements.txt
-CMD python server.py & sleep infinity
+COPY ./ .
+CMD python -u server.py
