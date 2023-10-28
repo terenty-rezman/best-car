@@ -39,7 +39,7 @@ async def ready_or_not():
 
 @sio.event
 async def publisher(sid):
-    print('Message from {}'.format(sid))
+    print('publisher {}'.format(sid))
 
     global publisher_sid
     if not publisher_sid:
@@ -49,7 +49,7 @@ async def publisher(sid):
 
 @sio.event
 async def subscriber(sid):
-    print('Message from {}'.format(sid))
+    print('subscriber {}'.format(sid))
 
     global subscriber_sid
     if not subscriber_sid:
