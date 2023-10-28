@@ -75,7 +75,7 @@ async def handle_signaling_data(data):
         peers_ready = True
 
         for c in early_candidates:
-            webrtcstreamer_add_ice_candidate(c)
+            await webrtcstreamer_add_ice_candidate(c)
         early_candidates = []
         
         async with aiohttp.ClientSession() as s:
@@ -91,7 +91,7 @@ async def handle_signaling_data(data):
         pass
     elif type == "candidate":
         if peers_ready:
-            webrtcstreamer_add_ice_candidate(data["candidate"])
+            await webrtcstreamer_add_ice_candidate(data["candidate"])
         else:
             early_candidates.append(data["candidate"])
 
