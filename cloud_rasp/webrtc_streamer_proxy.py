@@ -52,6 +52,24 @@ async def webrtcstreamer_add_ice_candidate(c):
         res = await s.post(add_candidate_url, data=json.dumps(c))
 
 
+async def webrtc_streamer_get_ice_candidates_multiple():
+    async with aiohttp.ClientSession() as s:
+        # poll candidates multiple times
+        for i in range(3):
+            get_ice_candidates_url = WEBRTC_STREAMER_URL + "/api/getIceCandidate" + "?peerid=" + peer_id
+
+            res = await s.get(get_ice_candidates_url)
+            candidates = await res.json(content_type=None)
+
+            for c in candidates:
+                print("local candidate:", c)
+                await sio.emit('data', {"type": 'candidate', "candidate": c})
+
+            if i < 2:
+                await asyncio.sleep(1)
+
+
+
 async def handle_signaling_data(data):
     type = data["type"]
     print("received event:", type)
@@ -76,22 +94,12 @@ async def handle_signaling_data(data):
         peers_ready = True
 
         print("sleeping a bit to let streamer collect its ice candidates...")
-        await asyncio.sleep(3)
 
         for c in early_candidates:
             await webrtcstreamer_add_ice_candidate(c)
         early_candidates = []
-        
-        async with aiohttp.ClientSession() as s:
-            get_ice_candidates_url = WEBRTC_STREAMER_URL + "/api/getIceCandidate" + "?peerid=" + peer_id
 
-            res = await s.get(get_ice_candidates_url)
-            candidates = await res.json(content_type=None)
-
-            for c in candidates:
-                print("local candidate:", c)
-                await sio.emit('data', {"type": 'candidate', "candidate": c})
-
+        await webrtc_streamer_get_ice_candidates_multiple()
     elif type == "answer":
         raise Exception("answer?")
     elif type == "candidate":
