@@ -63,17 +63,20 @@ async def handle_signaling_data(data):
         global peer_id
         peer_id = str(random.random())
         call_url = WEBRTC_STREAMER_URL + "/api/call?peerid=" + peer_id + "&url=" + quote_plus("videocap://0")
-        options_str = "rtptransport=tcp&timeout=60&width=640&height=480" 
+        options_str = "rtptransport=tcp&timeout=60&width=1280&height=720&fps=30" 
         call_url += "&options=" + quote_plus(options_str)
 
         print(call_url)
 
         async with aiohttp.ClientSession() as s:
             res = await s.post(call_url, data=json.dumps(data))
-            res_json = await res.json(content_type=None)
-            await sio.emit('data', res_json)
+            streamer_descr = await res.json(content_type=None)
+            await sio.emit('data', streamer_descr)
 
         peers_ready = True
+
+        print("sleeping a bit to let streamer collect its ice candidates...")
+        await asyncio.sleep(3)
 
         for c in early_candidates:
             await webrtcstreamer_add_ice_candidate(c)
@@ -88,8 +91,9 @@ async def handle_signaling_data(data):
             for c in candidates:
                 print("local candidate:", c)
                 await sio.emit('data', {"type": 'candidate', "candidate": c})
+
     elif type == "answer":
-        pass
+        raise Exception("answer?")
     elif type == "candidate":
         if peers_ready:
             await webrtcstreamer_add_ice_candidate(data["candidate"])
@@ -98,11 +102,11 @@ async def handle_signaling_data(data):
 
 
 async def init_webrtcstreamer():
-    async with aiohttp.ClientSession() as s:
-        res = await s.get(WEBRTC_STREAMER_URL + "/api/getIceServers")
-        ice_servers = await res.json(content_type=None);
+        async with aiohttp.ClientSession() as s:
+            res = await s.get(WEBRTC_STREAMER_URL + "/api/getIceServers")
+            ice_servers = await res.json(content_type=None);
 
-        print(ice_servers)
+            print(ice_servers)
 
         global early_candidates
         global peers_ready
