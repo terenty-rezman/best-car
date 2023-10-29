@@ -37,7 +37,7 @@ def disconnect():
 @sio.event
 async def ready():
     print('ready')
-    await init_webrtcstreamer()
+    reset_webrtcstreamer()
 
 
 @sio.event
@@ -76,9 +76,15 @@ async def handle_signaling_data(data):
 
     global peers_ready
     global early_candidates
+    global peer_id
 
     if type == "offer":
-        global peer_id
+        # disconnect first
+        # if peer_id:
+        #     async with aiohttp.ClientSession() as s:
+        #         res = await s.get(WEBRTC_STREAMER_URL + "/api/hangup?peerid=" + peer_id)
+        #         print("sent hangup to webrtcstreamer")
+
         peer_id = str(random.random())
         call_url = WEBRTC_STREAMER_URL + "/api/call?peerid=" + peer_id + "&url=" + quote_plus("videocap://0")
         options_str = "rtptransport=tcp&timeout=60&width=1280&height=720&fps=30" 
@@ -106,20 +112,21 @@ async def handle_signaling_data(data):
         if peers_ready:
             await webrtcstreamer_add_ice_candidate(data["candidate"])
         else:
+            print("early candidate")
             early_candidates.append(data["candidate"])
 
 
-async def init_webrtcstreamer():
+async def reset_webrtcstreamer():
+        global early_candidates
+        global peers_ready
+        early_candidates = []
+        peers_ready = False
+
         async with aiohttp.ClientSession() as s:
             res = await s.get(WEBRTC_STREAMER_URL + "/api/getIceServers")
             ice_servers = await res.json(content_type=None);
 
             print(ice_servers)
-
-        global early_candidates
-        global peers_ready
-        early_candidates = []
-        peers_ready = False
 
 
 async def main():
