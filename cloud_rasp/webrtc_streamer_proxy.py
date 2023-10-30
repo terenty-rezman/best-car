@@ -46,7 +46,7 @@ async def data(data):
 
 
 async def streamer_add_ice_candidate(c):
-    print('send candidate:', c)
+    print('send candidate to streamer:', c)
     add_candidate_url = WEBRTC_STREAMER_URL + "/api/addIceCandidate?peerid=" + peer_id
     async with aiohttp.ClientSession() as s:
         res = await s.post(add_candidate_url, data=json.dumps(c))
@@ -61,11 +61,15 @@ async def streamer_get_ice_candidates_multiple(times: int):
             res = await s.get(get_ice_candidates_url)
             candidates = await res.json(content_type=None)
 
+            print("candidates from streamer:", len(candidates))
+
             for c in candidates:
-                print("local candidate:", c)
+                print("local candidate from streamer:", c)
                 await sio.emit('data', {"type": 'candidate', "candidate": c})
 
-            if i < times - 1:
+            if i == times - 1:
+                break
+            else:
                 await asyncio.sleep(1)
 
 
@@ -128,8 +132,14 @@ async def handle_signaling_data(data):
 
 async def ask_streamer_to_call_frontend():
     await reset_webrtcstreamer()
-
     global peer_id
+
+    # disconnect first
+    if peer_id:
+        async with aiohttp.ClientSession() as s:
+            res = await s.get(WEBRTC_STREAMER_URL + "/api/hangup?peerid=" + peer_id)
+            print("sent hangup to webrtcstreamer")
+
     peer_id = str(random.random())
 
     offer_url = WEBRTC_STREAMER_URL + "/api/createOffer?peerid=" + peer_id + "&url=" + quote_plus("videocap://0")

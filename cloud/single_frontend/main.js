@@ -122,8 +122,7 @@ let handleSignalingData = (data) => {
   switch (data.type) {
     case 'offer':
       createPeerConnection();
-      pc.setRemoteDescription(new RTCSessionDescription(data));
-      sendAnswer();
+      pc.setRemoteDescription(new RTCSessionDescription(data)).then(sendAnswer);
       break;
     case 'answer':
       pc.setRemoteDescription(new RTCSessionDescription(data));
