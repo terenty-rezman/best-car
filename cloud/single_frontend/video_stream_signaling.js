@@ -106,6 +106,5 @@ function raspi_video_stream(remote_stream_element_selector) {
     };
 
     this.socket = socket;
-    this.pc = pc;
     this.connect = () => socket.connect();
 }

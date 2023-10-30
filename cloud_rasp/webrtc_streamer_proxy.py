@@ -153,7 +153,7 @@ async def ask_streamer_to_call_frontend():
 
 
 async def reset_webrtcstreamer():
-        global early_candidates
+        global early_candidAudioates
         global peers_ready
         early_candidates = []
         peers_ready = False
@@ -166,7 +166,14 @@ async def reset_webrtcstreamer():
 
 
 async def main():
-    await sio.connect(SIGNALING_SERVER_URL, socketio_path='signaling-ws/socket.io')
+    while(True):
+        try:
+            await sio.connect(SIGNALING_SERVER_URL, socketio_path='signaling-ws/socket.io')
+            break
+        except socketio.exceptions.ConnectionError as e:
+            print(e)
+            await asyncio.sleep(2)
+
     print("connected to signaling server")
     await sio.wait()
 
