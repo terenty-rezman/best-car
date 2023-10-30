@@ -34,7 +34,8 @@ async def ready_or_not():
     global subscriber_sid
     global publisher_sid
     if subscriber_sid and publisher_sid:
-        await sio.emit('ready', room=ROOM)
+        # send ready to webrtc streamer so it will call front end peer
+        await sio.emit('ready', room=ROOM, skip_sid=subscriber_sid)
 
 
 @sio.event
