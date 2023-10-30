@@ -50,19 +50,6 @@ let remoteStreamElement = document.querySelector('#remoteStream');
 let localStreamElement = document.querySelector('#localStream');
 
 let getLocalStream = () => {
-  //navigator.mediaDevices.getUserMedia({ audio: false, video: true })
-   // .then((stream) => {
-    //  console.log('Stream found');
-     // localStream = stream;
-      // Disable the microphone by default
-    //   stream.getAudioTracks()[0].enabled = false;
-      //localStreamElement.srcObject = localStream;
-      // Connect after making sure that local stream is availble
-      //socket.connect();
-    //})
-    //.catch(error => {
-    //  console.error('Stream not found: ', error);
-    //});
     socket.connect();
 }
 
@@ -91,10 +78,10 @@ let sendOffer = () => {
 
 let sendAnswer = () => {
   console.log('Send answer');
-  pc.createAnswer().then(
-    setAndSendLocalDescription,
-    (error) => { console.error('Send answer failed: ', error); }
-  );
+  pc.createAnswer()
+    .then((answer) => { pc.setLocalDescription(answer); return answer; })
+    .then((answer) => { sendData(answer); console.log("local description set"); })
+    .catch((e) => console.log(e));
 };
 
 let setAndSendLocalDescription = (sessionDescription) => {
@@ -116,6 +103,7 @@ let onIceCandidate = (event) => {
 
 let onTrack = (event) => {
   console.log('Add track');
+  console.log('streams len:', event.streams.length);
   remoteStreamElement.srcObject = event.streams[0];
 };
 
