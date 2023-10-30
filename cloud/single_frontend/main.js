@@ -32,13 +32,6 @@ socket.on('data', (data) => {
   handleSignalingData(data);
 });
 
-socket.on('ready', () => {
-  console.log('Ready');
-  // Connection with signaling server is ready, and so is local stream
-  createPeerConnection();
-  sendOffer();
-});
-
 let sendData = (data) => {
   socket.emit('data', data);
 };
@@ -49,31 +42,18 @@ let localStream;
 let remoteStreamElement = document.querySelector('#remoteStream');
 let localStreamElement = document.querySelector('#localStream');
 
-let getLocalStream = () => {
-    socket.connect();
-}
-
 let createPeerConnection = () => {
   try {
     pc = new RTCPeerConnection(PC_CONFIG);
     pc.onicecandidate = onIceCandidate;
     pc.ontrack = onTrack;
-    //pc.addStream(localStream);
     pc.oniceconnectionstatechange = (evt) => {
         console.log(evt);
-    }
+    };
     console.log('PeerConnection created');
   } catch (error) {
     console.error('PeerConnection failed: ', error);
   }
-};
-
-let sendOffer = () => {
-  console.log('Send offer');
-  pc.createOffer({ offerToReceiveVideo: true, offerToReceiveAudio: true }).then(
-    setAndSendLocalDescription,
-    (error) => { console.error('Send offer failed: ', error); }
-  );
 };
 
 let sendAnswer = () => {
@@ -123,12 +103,5 @@ let handleSignalingData = (data) => {
   }
 };
 
-let toggleMic = () => {
-  let track = localStream.getAudioTracks()[0];
-  track.enabled = !track.enabled;
-  let micClass = track.enabled ? "unmuted" : "muted";
-  document.getElementById("toggleMic").className = micClass;
-};
-
 // Start connection
-getLocalStream();
+socket.connect();
