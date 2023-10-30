@@ -105,7 +105,7 @@ let setAndSendLocalDescription = (sessionDescription) => {
 
 let onIceCandidate = (event) => {
   if (event.candidate) {
-    console.log('ICE candidate');
+    console.log('local ICE candidate');
     sendData({
       type: 'candidate',
       candidate: event.candidate
@@ -129,6 +129,7 @@ let handleSignalingData = (data) => {
       pc.setRemoteDescription(new RTCSessionDescription(data));
       break;
     case 'candidate':
+      console.log("remote ice candidate")
       pc.addIceCandidate(new RTCIceCandidate(data.candidate));
       break;
   }
