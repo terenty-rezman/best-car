@@ -98,9 +98,10 @@ let sendAnswer = () => {
 };
 
 let setAndSendLocalDescription = (sessionDescription) => {
-  pc.setLocalDescription(sessionDescription);
-  console.log('Local description set');
-  sendData(sessionDescription);
+  pc.setLocalDescription(sessionDescription, () => {
+    sendData(sessionDescription);
+    console.log('Local description set');
+  });
 };
 
 let onIceCandidate = (event) => {
