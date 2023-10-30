@@ -72,6 +72,9 @@ let createPeerConnection = () => {
     pc.onicecandidate = onIceCandidate;
     pc.ontrack = onTrack;
     //pc.addStream(localStream);
+    pc.oniceconnectionstatechange = (evt) => {
+        console.log(evt);
+    }
     console.log('PeerConnection created');
   } catch (error) {
     console.error('PeerConnection failed: ', error);

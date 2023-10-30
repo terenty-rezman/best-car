@@ -55,7 +55,7 @@ async def streamer_add_ice_candidate(c):
 async def streamer_get_ice_candidates_multiple(times: int):
     async with aiohttp.ClientSession() as s:
         # poll candidates multiple times
-        for i in range(times = 3):
+        for i in range(3):
             get_ice_candidates_url = WEBRTC_STREAMER_URL + "/api/getIceCandidate" + "?peerid=" + peer_id
 
             res = await s.get(get_ice_candidates_url)
@@ -129,13 +129,15 @@ async def handle_signaling_data(data):
 async def ask_streamer_to_call_frontend():
     await reset_webrtcstreamer()
 
+    global peer_id
     peer_id = str(random.random())
+
     offer_url = WEBRTC_STREAMER_URL + "/api/createOffer?peerid=" + peer_id + "&url=" + quote_plus("videocap://0")
     options_str = "rtptransport=tcp&timeout=60&width=1280&height=720&fps=30" 
     offer_url += "&options=" + quote_plus(options_str)
 
     async with aiohttp.ClientSession() as s:
-        res = await s.get(offer_url, data=json.dumps(data))
+        res = await s.get(offer_url)
         streamer_offer = await res.json(content_type=None)
         await sio.emit('data', streamer_offer)
 
