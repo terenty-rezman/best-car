@@ -78,14 +78,15 @@ async def create_peer():
     remote_descr_set = False
 
     pc = RTCPeerConnection()
+    channel = pc.createDataChannel("controls")
 
-    @pc.on("datachannel")
-    def on_datachannel(channel):
-        print(channel, "-", "created by remote party")
+    @channel.on("open")
+    def on_open():
+        print("channel opened")
 
-        @channel.on("message")
-        def on_message(message):
-            print(channel, "<", message)
+    @channel.on("message")
+    def on_message(message):
+        print(channel, "<", message) 
     
     await pc.setLocalDescription(await pc.createOffer())
     await sio.emit('data', pc.localDescription)

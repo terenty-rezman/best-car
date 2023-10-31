@@ -29,24 +29,26 @@ function control_stream() {
             pc.oniceconnectionstatechange = (evt) => {
                 console.log(evt);
             };
+             
+            pc.ondatachannel = (event) => {
+                data_channel = event.channel;
 
-            data_channel = peerConnection.createDataChannel("controls", data_channel_options);
+                data_channel.onerror = (error) => {
+                    console.log("Data Channel Error:", error);
+                };
 
-            data_channel.onerror = (error) => {
-                console.log("Data Channel Error:", error);
-            };
+                data_channel.onmessage = (event) => {
+                    console.log("Got Data Channel Message:", event.data);
+                };
 
-            data_channel.onmessage = (event) => {
-                console.log("Got Data Channel Message:", event.data);
-            };
+                data_channel.onopen = () => {
+                    data_channel.send("Hello World!");
+                };
 
-            data_channel.onopen = () => {
-                data_channel.send("Hello World!");
-            };
-
-            data_channel.onclose = () => {
-                console.log("The Data Channel is Closed");
-            };
+                data_channel.onclose = () => {
+                    console.log("The Data Channel is Closed");
+                };
+            }
 
             console.log('PeerConnection created');
         } catch (error) {
