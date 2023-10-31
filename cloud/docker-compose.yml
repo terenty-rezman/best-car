@@ -51,7 +51,7 @@ services:
                         - ./ssl:/etc/nginx/ssl
                         - ./nginx_conf/nginx.conf:/etc/nginx/nginx.conf
                         - ./nginx_conf/service.conf:/etc/nginx/service.conf
-                        - ./single_frontend:/usr/share/nginx/html
+                        - ./p2p_frontend:/usr/share/nginx/html
                           # - ./etc/service-example-2.conf:/etc/nginx/service2.conf # more services, should be service*.conf
                           # - ./etc/stream-example-2.conf:/etc/nginx/stream2.conf # more streams, should be stream*.conf
                           # - ./etc/conf.d:/etc/nginx/conf.d-le # configuration folder, all files from it will be added
