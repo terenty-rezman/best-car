@@ -6,9 +6,8 @@ import random
 from urllib.parse import quote_plus
 import json
 
+from settings import *
 
-SIGNALING_SERVER_URL = 'https://2089517-cn34567.twc1.net'
-WEBRTC_STREAMER_URL = 'http://localhost:8000'
 
 peer_id = None
 early_candidates = []
@@ -153,7 +152,7 @@ async def ask_streamer_to_call_frontend():
 
 
 async def reset_webrtcstreamer():
-        global early_candidAudioates
+        global early_candidates
         global peers_ready
         early_candidates = []
         peers_ready = False
