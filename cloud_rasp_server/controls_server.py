@@ -88,8 +88,10 @@ async def create_peer():
     def on_message(message):
         print(channel, "<", message) 
     
-    await pc.setLocalDescription(await pc.createOffer())
-    await sio.emit('data', pc.localDescription)
+    offer = await pc.createOffer()
+    await pc.setLocalDescription(offer)
+
+    await sio.emit('data', {"type": "offer", "sdp":offer.sdp})
 
 
 async def main():
