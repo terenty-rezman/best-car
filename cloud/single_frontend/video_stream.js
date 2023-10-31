@@ -1,28 +1,7 @@
 'use strict'
 
-// Config variables: change them to point to your own servers
-const SIGNALING_SERVER_URL = `https://${window.location.hostname}`;
-const SIGNALING_SERVER_PATH = '/signaling-ws/socket.io'
-const TURN_SERVER_URL = `${window.location.hostname}:5349`;
-const TURN_SERVER_USERNAME = 'user1';
-const TURN_SERVER_CREDENTIAL = 'thecar';
-
-const PC_CONFIG = {
-    iceServers: [
-        {
-            urls: 'turn:' + TURN_SERVER_URL + '?transport=tcp',
-            username: TURN_SERVER_USERNAME,
-            credential: TURN_SERVER_CREDENTIAL
-        },
-        {
-            urls: 'turn:' + TURN_SERVER_URL + '?transport=udp',
-            username: TURN_SERVER_USERNAME,
-            credential: TURN_SERVER_CREDENTIAL
-        }
-    ]
-};
-
 function raspi_video_stream(remote_stream_element_selector) {
+    remote_stream_element_selector = remote_stream_element_selector || '#remoteStream'
 
     // signaling methods
     let socket = io(SIGNALING_SERVER_URL, { path: SIGNALING_SERVER_PATH, autoConnect: false });
@@ -42,7 +21,7 @@ function raspi_video_stream(remote_stream_element_selector) {
 
     // WebRTC methods
     let pc;
-    let remoteStreamElement = document.querySelector(remote_stream_element_selector || '#remoteStream');
+    let remoteStreamElement = document.querySelector(remote_stream_element_selector);
 
     let createPeerConnection = () => {
         try {
@@ -66,13 +45,6 @@ function raspi_video_stream(remote_stream_element_selector) {
             .catch((e) => console.log(e));
     };
 
-    let setAndSendLocalDescription = (sessionDescription) => {
-        pc.setLocalDescription(sessionDescription, () => {
-            sendData(sessionDescription);
-            console.log('Local description set');
-        });
-    };
-
     let onIceCandidate = (event) => {
         if (event.candidate) {
             console.log('local ICE candidate');
@@ -94,9 +66,6 @@ function raspi_video_stream(remote_stream_element_selector) {
             case 'offer':
                 createPeerConnection();
                 pc.setRemoteDescription(new RTCSessionDescription(data)).then(sendAnswer);
-                break;
-            case 'answer':
-                pc.setRemoteDescription(new RTCSessionDescription(data));
                 break;
             case 'candidate':
                 console.log("remote ice candidate")
